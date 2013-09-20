@@ -10,6 +10,8 @@
 
 namespace rich_typed_ptr {
 
+template <class T> class weak_ptr;
+
 template <class T>
 class owner_ptr {
 
@@ -31,6 +33,9 @@ public:
     template <class U, class ... Us>
     friend owner_ptr<U> make (Us&& ...);
 
+    // distributed access
+    friend weak_ptr<T>;
+
 private:
     T * pointer;
 
@@ -42,6 +47,27 @@ template <class T, class ... Ts>
 owner_ptr<T> make (Ts&& ... init) {
     return new T(std::forward<Ts>(init)...);
 }
+
+template <class T>
+class weak_ptr {
+
+public:
+    // copyable but not default-constructible
+    weak_ptr ( ) = delete;
+    weak_ptr (const owner_ptr<T> & source) : pointer(source.pointer) { }
+    weak_ptr & operator= (const owner_ptr<T> & source) {
+        pointer = source.pointer;
+        return *this;
+    }
+
+    // dereferencable
+    T & operator* ( ) { return *pointer; }
+    T & operator-> ( ) { return *pointer; }
+
+private:
+    T * pointer;
+
+};
 
 }  // namespace rich_typed_ptr
 
