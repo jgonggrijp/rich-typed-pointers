@@ -3,12 +3,12 @@
     License to be specified (copycenter)
 */
 
-#ifndef JG_RICHTYPEDPTR_HPP
-#define JG_RICHTYPEDPTR_HPP
+#ifndef JG_RICH_TYPED_PTR_HPP
+#define JG_RICH_TYPED_PTR_HPP
 
 #include <utility>
 
-namespace richtypedptr {
+namespace rich_typed_ptr {
 
 template <class T>
 class owner_ptr {
@@ -43,6 +43,6 @@ owner_ptr<T> make (Ts&& ... init) {
     return new T(std::forward<Ts>(init)...);
 }
 
-}  // namespace richtypedptr
+}  // namespace rich_typed_ptr
 
-#endif  // JG_RICHTYPEDPTR_HPP
+#endif  // JG_RICH_TYPED_PTR_HPP
