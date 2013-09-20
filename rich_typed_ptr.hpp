@@ -18,7 +18,6 @@ class owner_ptr {
 public:
     // move-constructible but not copyable or assignable
     owner_ptr ( ) = delete;
-    owner_ptr (const owner_ptr &) = delete;
     owner_ptr (owner_ptr && source) : pointer(source.pointer) {
         source.pointer = 0;
     }
