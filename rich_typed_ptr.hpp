@@ -28,8 +28,8 @@ public:
     owner_ptr & operator= (owner_ptr &&) = delete;
 
     // dereferencable
-    T & operator* ( ) { assert(pointer); return *pointer; }
-    T * operator-> ( ) { assert(pointer); return pointer; }
+    T & operator* ( ) const { assert(pointer); return *pointer; }
+    T * operator-> ( ) const { assert(pointer); return pointer; }
 
     // (implicit) nullptr check
     bool operator== (std::nullptr_t) const { return pointer == nullptr; }
@@ -76,11 +76,11 @@ public:
     }
 
     // dereferencable
-    T & operator* ( ) {
+    T & operator* ( ) const {
         assert(pointer);
         return *pointer;
     }
-    T * operator-> ( ) {
+    T * operator-> ( ) const {
         assert(pointer);
         return pointer;
     }
@@ -115,8 +115,8 @@ public:
     }
 
     // dereferencable
-    T & operator* ( ) { assert(pointer); return *pointer; }
-    T * operator-> ( ) { assert(pointer); return pointer; }
+    T & operator* ( ) const { assert(pointer); return *pointer; }
+    T * operator-> ( ) const { assert(pointer); return pointer; }
 
     // comparisons
     friend bool operator== (weak_ptr left, weak_ptr right) {
