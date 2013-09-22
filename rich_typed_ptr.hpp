@@ -124,6 +124,8 @@ private:
 
 };
 
+using namespace std::rel_ops;
+
 }  // namespace rich_typed_ptr
 
 #endif  // JG_RICH_TYPED_PTR_HPP
