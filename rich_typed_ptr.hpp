@@ -22,7 +22,7 @@ public:
     // move-constructible but not copyable or assignable
     owner_ptr ( ) = delete;
     owner_ptr (owner_ptr && source) : pointer(source.pointer) {
-        source.pointer = 0;
+        source.pointer = nullptr;
     }
     ~owner_ptr ( ) { if (pointer) delete pointer; }
     owner_ptr & operator= (owner_ptr &&) = delete;
@@ -62,11 +62,11 @@ public:
     // like owner_ptr, also assignable and initializable from nullptr
     data_ptr ( ) = delete;
     data_ptr (data_ptr && source) : pointer(source.pointer) {
-        source.pointer = 0;
+        source.pointer = nullptr;
     }
     data_ptr (std::nullptr_t) : pointer(nullptr) { }
     data_ptr (owner_ptr<T> && source) : pointer(source.pointer) {
-        source.pointer = 0;
+        source.pointer = nullptr;
     }
     ~data_ptr ( ) { if (pointer) delete pointer; }
     data_ptr & operator= (data_ptr && source) {
