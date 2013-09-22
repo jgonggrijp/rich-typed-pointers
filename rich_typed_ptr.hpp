@@ -90,7 +90,6 @@ public:
     operator bool ( ) const { return pointer; }
 
     // distributed access
-    operator weak_ptr<T> ( ) { return weak_ptr<T>(*this); }
     friend weak_ptr<T>;
 
 private:
