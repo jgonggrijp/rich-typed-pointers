@@ -6,7 +6,6 @@ namespace rtp = rich_typed_ptr;
 #include <algorithm>
 #include <cstddef>
 using namespace std;
-using namespace std::rel_ops;
 
 template <class T> class list_iterator;
 template <class T> class list;
@@ -28,7 +27,7 @@ public:
     void append (const T & value) {
         data_ptr insertion = rtp::make<list_node>(value, move(next), prev->next);
         swap(insertion, next);
-        if (next->next) next->next->prev = next;
+        if (next->next != nullptr) next->next->prev = next;
     }
     void prepend (const T & value) {
         prev->next = rtp::make<list_node>(value, move(prev->next), prev);
@@ -37,7 +36,7 @@ public:
     void remove_next ( ) {
         auto excision = move(next);
         next = move(excision->next);
-        if (next) next->prev = excision->prev;
+        if (next != nullptr) next->prev = excision->prev;
     }
     void remove ( ) { prev->remove_next(); }
 
@@ -109,20 +108,20 @@ public:
     using iterator = list_iterator<T>;
 
     iterator begin ( ) { return typename node::weak_ptr(first); }
-    iterator end ( ) { return last ? last->next : last; }
+    iterator end ( ) { return (last != nullptr) ? last->next : last; }
 
     T & front ( ) { return first->data; }
     T & back ( ) { return last->data; }
 
     void push_front (const T & value) {
-        if (first) {
+        if (first != nullptr) {
             first = rtp::make<node>(value, move(first), first->prev);
-            if (first->next) first->next->prev = first;
+            if (first->next != nullptr) first->next->prev = first;
         }
         else inaugurate(value);
     }
     void push_back (const T & value) {
-        if      (! last) inaugurate(value);
+        if      (last == nullptr) inaugurate(value);
         else if (last == first) {
             last->next = rtp::make<node>(value, move(last->next), last);
         } else {
@@ -131,32 +130,32 @@ public:
         }
     }
     void insert (iterator pos, const T & value) {
-        if      (pos.position == first) push_front(value);
-        else if (pos.position)          pos.position->prepend(value);
-        else                            push_back(value);
+        if      (pos.position == first)     push_front(value);
+        else if (pos.position != nullptr)   pos.position->prepend(value);
+        else                                push_back(value);
     }
 
     void pop_front ( ) {
-        if (first) {
+        if (first != nullptr) {
             auto trash = move(first);
             first = move(trash->next);
-            if  (first) first->prev = trash->prev;
-            else        last = first;
+            if   (first != nullptr) first->prev = trash->prev;
+            else                    last = first;
         }
     }
     void pop_back ( ) {
         if      (last == first) pop_front();
-        else if (last) {
+        else if (last != nullptr) {
             auto trash = move(last->prev->next);
             last = trash->prev;
         }
     }
     void erase (iterator pos) {
-        if      (pos.position == first) pop_front();
-        else if (pos.position)          pos.position->remove();
+        if      (pos.position == first)     pop_front();
+        else if (pos.position != nullptr)   pos.position->remove();
     }
 
-    bool empty ( ) { return !first; }
+    bool empty ( ) { return first == nullptr; }
     void clear ( ) {
         auto trash = move(first);
         last = first;

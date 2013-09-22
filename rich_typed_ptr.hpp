@@ -35,9 +35,14 @@ public:
     T & operator*  ( ) const { assert(pointer); return *pointer; }
     T * operator-> ( ) const { assert(pointer); return  pointer; }
 
-    // (implicit) nullptr check
-    operator bool ( ) const { return pointer; }
+    // comparisons
     bool operator== (std::nullptr_t) const { return pointer == nullptr; }
+    friend bool operator== (const owner_ptr & left, const owner_ptr & right) {
+        return left.pointer == right.pointer;
+    }
+    friend bool operator!= (const owner_ptr & left, const owner_ptr & right) {
+        return left.pointer != right.pointer;
+    }
 
     // distributed access, usage as initializer
     friend weak_ptr<T>;
@@ -79,9 +84,14 @@ public:
     T & operator*  ( ) const { assert(pointer); return *pointer; }
     T * operator-> ( ) const { assert(pointer); return  pointer; }
 
-    // (implicit) nullptr check
-    operator bool ( ) const { return pointer; }
+    // comparisons
     bool operator== (std::nullptr_t) const { return pointer == nullptr; }
+    friend bool operator== (const data_ptr & left, const data_ptr & right) {
+        return left.pointer == right.pointer;
+    }
+    friend bool operator!= (const data_ptr & left, const data_ptr & right) {
+        return left.pointer != right.pointer;
+    }
 
     // distributed access
     friend weak_ptr<T>;
@@ -113,10 +123,12 @@ public:
     T * operator-> ( ) const { assert(pointer); return  pointer; }
 
     // comparisons
-    operator bool ( ) const { return pointer; }
     bool operator== (std::nullptr_t) const { return pointer == nullptr; }
     friend bool operator== (weak_ptr left, weak_ptr right) {
         return left.pointer == right.pointer;
+    }
+    friend bool operator!= (weak_ptr left, weak_ptr right) {
+        return left.pointer != right.pointer;
     }
 
 private:
@@ -124,7 +136,10 @@ private:
 
 };
 
-using namespace std::rel_ops;
+template <class T>
+inline bool operator!= (const T & left, std::nullptr_t) {
+    return !(left == nullptr);
+}
 
 }  // namespace rich_typed_ptr
 
