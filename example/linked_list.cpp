@@ -24,11 +24,6 @@ public:
                                                     prev(p) {
     }
 
-    void append (const T & value) {
-        data_ptr insertion = rtp::make<list_node>(value, move(next), prev->next);
-        swap(insertion, next);
-        if (next->next != nullptr) next->next->prev = next;
-    }
     void prepend (const T & value) {
         prev->next = rtp::make<list_node>(value, move(prev->next), prev);
         prev = prev->next;
@@ -121,13 +116,11 @@ public:
         else inaugurate(value);
     }
     void push_back (const T & value) {
-        if      (last == nullptr) inaugurate(value);
-        else if (last == first) {
+        if (last != nullptr) {
             last->next = rtp::make<node>(value, move(last->next), last);
-        } else {
-            last->append(value);
             last = last->next;
         }
+        else inaugurate(value);
     }
     void insert (iterator pos, const T & value) {
         if      (pos.position == first)     push_front(value);
