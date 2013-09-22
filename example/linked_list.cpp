@@ -111,7 +111,7 @@ public:
     void push_front (const T & value) {
         if (first != nullptr) {
             first = rtp::make<node>(value, move(first), first->prev);
-            if (first->next != nullptr) first->next->prev = first;
+            first->next->prev = first;
         }
         else inaugurate(value);
     }
