@@ -29,7 +29,7 @@ public:
 
     // dereferencable
     T & operator* ( ) { return *pointer; }
-    T & operator-> ( ) { return *pointer; }
+    T * operator-> ( ) { return pointer; }
 
     // factory function
     template <class U, class ... Us>
