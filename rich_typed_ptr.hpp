@@ -6,7 +6,6 @@
 #ifndef JG_RICH_TYPED_PTR_HPP
 #define JG_RICH_TYPED_PTR_HPP
 
-#include <iostream>
 #include <utility>
 #include <cstddef>
 #include <cassert>
