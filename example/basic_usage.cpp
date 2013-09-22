@@ -25,7 +25,7 @@ int main ( ) {
     auto test1 = givemeapointer(4);
 
     // explicit copy from an owner_ptr requires explicit type
-    rtp::weak_ptr<int> test2 = test1;
+    auto test2 = rtp::weak<int>(test1);
 
     cout << *test1 << ' ' << *test2 << endl;  // 4 4
     mutatesomeintptr(test1);
@@ -37,7 +37,7 @@ int main ( ) {
     auto test3 = test2;
 
     auto test4 = rtp::make<int>(4);
-    rtp::weak_ptr<int> test5 = test4;
+    auto test5 = rtp::weak<int>(test4);
     auto test6 = ptr_min(test3, test5);
     cout << *test6 << endl;  // 4
 

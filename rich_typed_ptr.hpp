@@ -6,7 +6,6 @@
 #ifndef JG_RICH_TYPED_PTR_HPP
 #define JG_RICH_TYPED_PTR_HPP
 
-#include <iostream>
 #include <utility>
 #include <cstddef>
 #include <cassert>
@@ -23,18 +22,27 @@ public:
     // move-constructible but not copyable or assignable
     owner_ptr ( ) = delete;
     owner_ptr (owner_ptr && source) : pointer(source.pointer) {
-        source.pointer = 0;
+        source.pointer = nullptr;
     }
     ~owner_ptr ( ) { if (pointer) delete pointer; }
     owner_ptr & operator= (owner_ptr &&) = delete;
 
-    // dereferencable
-    T & operator* ( ) { return *pointer; }
-    T & operator-> ( ) { return *pointer; }
-
     // factory function
     template <class U, class ... Us>
     friend owner_ptr<U> make (Us&& ...);
+
+    // dereferencable
+    T & operator*  ( ) const { assert(pointer); return *pointer; }
+    T * operator-> ( ) const { assert(pointer); return  pointer; }
+
+    // comparisons
+    bool operator== (std::nullptr_t) const { return pointer == nullptr; }
+    friend bool operator== (const owner_ptr & left, const owner_ptr & right) {
+        return left.pointer == right.pointer;
+    }
+    friend bool operator!= (const owner_ptr & left, const owner_ptr & right) {
+        return left.pointer != right.pointer;
+    }
 
     // distributed access, usage as initializer
     friend weak_ptr<T>;
@@ -57,13 +65,13 @@ class data_ptr {
 
 public:
     // like owner_ptr, also assignable and initializable from nullptr
-    data_ptr ( ) : pointer(nullptr) { }
-    data_ptr (data_ptr && source) : pointer(source.pointer) {
-        source.pointer = 0;
+    data_ptr ( ) = delete;
+    data_ptr (std::nullptr_t)         : pointer(nullptr)        { }
+    data_ptr (data_ptr && source)     : pointer(source.pointer) {
+        source.pointer = nullptr;
     }
-    data_ptr (std::nullptr_t) : pointer(nullptr) { }
     data_ptr (owner_ptr<T> && source) : pointer(source.pointer) {
-        source.pointer = 0;
+        source.pointer = nullptr;
     }
     ~data_ptr ( ) { if (pointer) delete pointer; }
     data_ptr & operator= (data_ptr && source) {
@@ -73,21 +81,19 @@ public:
     }
 
     // dereferencable
-    T & operator* ( ) {
-        assert(pointer);
-        return *pointer;
-    }
-    T * operator-> ( ) {
-        assert(pointer);
-        return pointer;
-    }
+    T & operator*  ( ) const { assert(pointer); return *pointer; }
+    T * operator-> ( ) const { assert(pointer); return  pointer; }
 
-    // (implicit) nullptr check
+    // comparisons
     bool operator== (std::nullptr_t) const { return pointer == nullptr; }
-    operator bool ( ) const { return pointer; }
+    friend bool operator== (const data_ptr & left, const data_ptr & right) {
+        return left.pointer == right.pointer;
+    }
+    friend bool operator!= (const data_ptr & left, const data_ptr & right) {
+        return left.pointer != right.pointer;
+    }
 
     // distributed access
-    operator weak_ptr<T> ( ) { return weak_ptr<T>(*this); }
     friend weak_ptr<T>;
 
 private:
@@ -102,31 +108,43 @@ public:
     // copyable but not default-constructible
     weak_ptr ( ) = delete;
     weak_ptr (const owner_ptr<T> & source) : pointer(source.pointer) { }
-    weak_ptr (const data_ptr<T> & source) : pointer(source.pointer) { }
+    weak_ptr (const  data_ptr<T> & source) : pointer(source.pointer) { }
     weak_ptr & operator= (const owner_ptr<T> & source) {
         pointer = source.pointer;
         return *this;
     }
-    weak_ptr & operator= (const data_ptr<T> & source) {
+    weak_ptr & operator= (const  data_ptr<T> & source) {
         pointer = source.pointer;
         return *this;
     }
 
     // dereferencable
-    T & operator* ( ) { return *pointer; }
-    T * operator-> ( ) { return pointer; }
+    T & operator*  ( ) const { assert(pointer); return *pointer; }
+    T * operator-> ( ) const { assert(pointer); return  pointer; }
 
     // comparisons
+    bool operator== (std::nullptr_t) const { return pointer == nullptr; }
     friend bool operator== (weak_ptr left, weak_ptr right) {
         return left.pointer == right.pointer;
     }
-    bool operator== (std::nullptr_t) const { return pointer == nullptr; }
-    operator bool ( ) const { return pointer; }
+    friend bool operator!= (weak_ptr left, weak_ptr right) {
+        return left.pointer != right.pointer;
+    }
 
 private:
     T * pointer;
 
 };
+
+template <class T>
+inline bool operator!= (const T & left, std::nullptr_t) {
+    return !(left == nullptr);
+}
+
+template <class T>
+weak_ptr<T> weak (weak_ptr<T> pointer) {
+    return pointer;
+}
 
 }  // namespace rich_typed_ptr
 
