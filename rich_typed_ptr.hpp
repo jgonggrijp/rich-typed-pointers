@@ -27,6 +27,10 @@ public:
     ~owner_ptr ( ) { if (pointer) delete pointer; }
     owner_ptr & operator= (owner_ptr &&) = delete;
 
+    // factory function
+    template <class U, class ... Us>
+    friend owner_ptr<U> make (Us&& ...);
+
     // dereferencable
     T & operator*  ( ) const { assert(pointer); return *pointer; }
     T * operator-> ( ) const { assert(pointer); return  pointer; }
@@ -34,10 +38,6 @@ public:
     // (implicit) nullptr check
     operator bool ( ) const { return pointer; }
     bool operator== (std::nullptr_t) const { return pointer == nullptr; }
-
-    // factory function
-    template <class U, class ... Us>
-    friend owner_ptr<U> make (Us&& ...);
 
     // distributed access, usage as initializer
     friend weak_ptr<T>;
