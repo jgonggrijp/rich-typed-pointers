@@ -66,10 +66,10 @@ class data_ptr {
 public:
     // like owner_ptr, also assignable and initializable from nullptr
     data_ptr ( ) = delete;
+    data_ptr (std::nullptr_t)         : pointer(nullptr)        { }
     data_ptr (data_ptr && source)     : pointer(source.pointer) {
         source.pointer = nullptr;
     }
-    data_ptr (std::nullptr_t)         : pointer(nullptr)        { }
     data_ptr (owner_ptr<T> && source) : pointer(source.pointer) {
         source.pointer = nullptr;
     }
