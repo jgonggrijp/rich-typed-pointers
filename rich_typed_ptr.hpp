@@ -141,6 +141,11 @@ inline bool operator!= (const T & left, std::nullptr_t) {
     return !(left == nullptr);
 }
 
+template <class T>
+weak_ptr<T> weak (weak_ptr<T> pointer) {
+    return pointer;
+}
+
 }  // namespace rich_typed_ptr
 
 #endif  // JG_RICH_TYPED_PTR_HPP

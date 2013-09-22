@@ -107,7 +107,7 @@ public:
     using pointer = T*;
     using iterator = list_iterator<T>;
 
-    iterator begin ( ) { return typename node::weak_ptr(first); }
+    iterator begin ( ) { return rtp::weak<node>(first); }
     iterator end ( ) { return (last != nullptr) ? last->next : last; }
 
     T & front ( ) { return first->data; }
