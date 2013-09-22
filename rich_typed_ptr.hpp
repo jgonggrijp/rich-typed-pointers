@@ -56,7 +56,7 @@ class data_ptr {
 
 public:
     // like owner_ptr, also assignable and initializable from nullptr
-    data_ptr ( ) : pointer(nullptr) { }
+    data_ptr ( ) = delete;
     data_ptr (data_ptr && source) : pointer(source.pointer) {
         source.pointer = 0;
     }
