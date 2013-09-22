@@ -31,6 +31,10 @@ public:
     T & operator* ( ) { return *pointer; }
     T * operator-> ( ) { return pointer; }
 
+    // (implicit) nullptr check
+    bool operator== (std::nullptr_t) const { return pointer == nullptr; }
+    operator bool ( ) const { return pointer; }
+
     // factory function
     template <class U, class ... Us>
     friend owner_ptr<U> make (Us&& ...);
