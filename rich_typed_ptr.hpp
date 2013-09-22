@@ -28,12 +28,12 @@ public:
     owner_ptr & operator= (owner_ptr &&) = delete;
 
     // dereferencable
-    T & operator* ( ) const { assert(pointer); return *pointer; }
-    T * operator-> ( ) const { assert(pointer); return pointer; }
+    T & operator*  ( ) const { assert(pointer); return *pointer; }
+    T * operator-> ( ) const { assert(pointer); return  pointer; }
 
     // (implicit) nullptr check
-    bool operator== (std::nullptr_t) const { return pointer == nullptr; }
     operator bool ( ) const { return pointer; }
+    bool operator== (std::nullptr_t) const { return pointer == nullptr; }
 
     // factory function
     template <class U, class ... Us>
@@ -61,10 +61,10 @@ class data_ptr {
 public:
     // like owner_ptr, also assignable and initializable from nullptr
     data_ptr ( ) = delete;
-    data_ptr (data_ptr && source) : pointer(source.pointer) {
+    data_ptr (data_ptr && source)     : pointer(source.pointer) {
         source.pointer = nullptr;
     }
-    data_ptr (std::nullptr_t) : pointer(nullptr) { }
+    data_ptr (std::nullptr_t)         : pointer(nullptr)        { }
     data_ptr (owner_ptr<T> && source) : pointer(source.pointer) {
         source.pointer = nullptr;
     }
@@ -76,18 +76,12 @@ public:
     }
 
     // dereferencable
-    T & operator* ( ) const {
-        assert(pointer);
-        return *pointer;
-    }
-    T * operator-> ( ) const {
-        assert(pointer);
-        return pointer;
-    }
+    T & operator*  ( ) const { assert(pointer); return *pointer; }
+    T * operator-> ( ) const { assert(pointer); return  pointer; }
 
     // (implicit) nullptr check
-    bool operator== (std::nullptr_t) const { return pointer == nullptr; }
     operator bool ( ) const { return pointer; }
+    bool operator== (std::nullptr_t) const { return pointer == nullptr; }
 
     // distributed access
     friend weak_ptr<T>;
@@ -104,26 +98,26 @@ public:
     // copyable but not default-constructible
     weak_ptr ( ) = delete;
     weak_ptr (const owner_ptr<T> & source) : pointer(source.pointer) { }
-    weak_ptr (const data_ptr<T> & source) : pointer(source.pointer) { }
+    weak_ptr (const  data_ptr<T> & source) : pointer(source.pointer) { }
     weak_ptr & operator= (const owner_ptr<T> & source) {
         pointer = source.pointer;
         return *this;
     }
-    weak_ptr & operator= (const data_ptr<T> & source) {
+    weak_ptr & operator= (const  data_ptr<T> & source) {
         pointer = source.pointer;
         return *this;
     }
 
     // dereferencable
-    T & operator* ( ) const { assert(pointer); return *pointer; }
-    T * operator-> ( ) const { assert(pointer); return pointer; }
+    T & operator*  ( ) const { assert(pointer); return *pointer; }
+    T * operator-> ( ) const { assert(pointer); return  pointer; }
 
     // comparisons
+    operator bool ( ) const { return pointer; }
+    bool operator== (std::nullptr_t) const { return pointer == nullptr; }
     friend bool operator== (weak_ptr left, weak_ptr right) {
         return left.pointer == right.pointer;
     }
-    bool operator== (std::nullptr_t) const { return pointer == nullptr; }
-    operator bool ( ) const { return pointer; }
 
 private:
     T * pointer;
