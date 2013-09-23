@@ -7,7 +7,7 @@ using namespace std;
 
 struct shape {
     virtual string describe ( ) = 0;
-    virtual ~shape ( ) { }
+    virtual ~shape ( ) { }  // necessary, would not compile otherwise
 };
 
 struct circle : shape {
@@ -20,13 +20,16 @@ struct circle : shape {
 struct square : shape {
     string describe ( ) {
         return  "My four sides, all straight and equally long, "
-                "are connected by orthogonal angles";
+                "are connected by orthogonal corners";
     }
 };
 
 int main ( ) {
+    // rtp::make_dynamice<base, derived> returns a pointer to base
+    // which references an object of type derived
     auto test1 = rtp::make_dynamic<shape, circle>();
     auto test2 = rtp::make_dynamic<shape, square>();
     cout << test1->describe() << endl << test2->describe() << endl;
-    return 0;
+
+    return 0;  // memory neatly returned here
 }
