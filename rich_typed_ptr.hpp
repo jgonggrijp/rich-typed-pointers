@@ -7,6 +7,7 @@
 #define JG_RICH_TYPED_PTR_HPP
 
 #include <utility>
+#include <type_traits>
 #include <cstddef>
 #include <cassert>
 
@@ -27,9 +28,11 @@ public:
     ~owner_ptr ( ) { if (pointer) delete pointer; }
     owner_ptr & operator= (owner_ptr &&) = delete;
 
-    // factory function
+    // factory functions
     template <class U, class ... Us>
     friend owner_ptr<U> make (Us&& ...);
+    template <class U1, class U2, class ... Us>
+    friend owner_ptr<U1> make_dynamic (Us&& ...);
 
     // dereferencable
     T & operator*  ( ) const { assert(pointer); return *pointer; }
@@ -58,6 +61,18 @@ private:
 template <class T, class ... Ts>
 owner_ptr<T> make (Ts&& ... init) {
     return new T(std::forward<Ts>(init)...);
+}
+
+// safe dynamic binding
+template <class T1, class T2, class ... Ts>
+owner_ptr<T1> make_dynamic (Ts&& ... init) {
+    static_assert(  std::is_base_of<T1, T2>::value,
+                    "Rich-typed ptr to base can only reference "
+                    "base or derived"   );
+    static_assert(  std::has_virtual_destructor<T1>::value,
+                    "Base type must have virtual destructor "
+                    "in order to prevent memory leaks"      );
+    return new T2(std::forward<Ts>(init)...);
 }
 
 template <class T>
