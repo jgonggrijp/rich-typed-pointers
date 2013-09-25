@@ -162,8 +162,15 @@ inline bool operator!= (const T & left, std::nullptr_t) {
     return !(left == nullptr);
 }
 
-template <class Ptr, class T = typename Ptr::value_type>
-weak_ptr<T> weak (const Ptr & pointer) {
+template <class Ptr>
+struct ptr_traits {
+    using value_type = typename Ptr::value_type;
+    using weak_ptr_t = weak_ptr<value_type>;
+};
+
+template <class Ptr>
+typename ptr_traits<Ptr>::weak_ptr_t
+weak (const Ptr & pointer) {
     return pointer;
 }
 
