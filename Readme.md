@@ -48,6 +48,11 @@ For the purpose of object-oriented programming the rich-typed pointer library im
 All templates in `rich_typed_ptr.hpp` will be specialized for array types. This is not implemented yet.
 
 
+### Storage in containers ###
+
+`owner_ptr`, `data_ptr` and `weak_ptr` can all be safely stored in containers. In the former two cases the container owns all objects referenced by the pointers it stores, in the latter case it does not.
+
+
 ### Cyclic references ###
 
 Under normal usage, cyclic ownership is impossible so it cannot lead to memory leaks. Cyclic referencing through `weak_ptr`s is possible but unproblematic.
