@@ -82,3 +82,81 @@ As with all smart pointers, it is the responsibility of the user to prevent race
 ### Exception safety ###
 
 `make` and `make_dynamic` will usually offer some degree of exceptions safety, depending on the allocator and the constructor of the object being allocated. Move and copy operations, the comparison operators and `weak` offer the no-throw guarantee. All other operations offer the basic no-leak guarantee on the condition that the referenced object has a non-throwing destructor. None of the functions in the library will throw exceptions out of themselves.
+
+
+## How it could be even better ##
+
+The C++ type system has two shortcomings that prevent rich-typed pointers from being the ultimate safe solution to nearly all use cases. Solving the first shortcoming would remove the need for explicit typecasts to `weak_ptr`. Solving the second shortcoming would remove the need for the runtime assertions that are currently included in the code, by catching the corresponding errors at compile time.
+
+
+### Better type deduction ###
+
+The `auto` keyword can be used when an `owner_ptr` is created:
+
+    auto foo = make<int>();
+
+The compiler determines that the type of the expression `make<int>()` is `owner_ptr<int>` and correctly assigns this type to `foo`. However, the following fails to compile:
+
+    auto bar = foo;
+
+The C++ standard dictates that the type of `bar` should be deduced by inferring the type of the right-hand side of the assignment, which is `owner_ptr<int>`. This makes the entire statement a copy assignment of `owner_ptr<int>` to `owner_ptr<int>`, which is not allowed. However, any human reader with knowledge of the rich-typed pointer library can see that the type of `bar` should be `weak_ptr<int>`. What the `auto` keyword really should be doing is to take the entire statement into account, by looking for a type that can substitute the question mark in the following constructor prototype:
+
+    ? (const owner_ptr<int> &);
+
+and then it would unambiguously find `weak_ptr<int>`. Since this is not what `auto` does, we have to write this workaround:
+
+    auto bar = weak(foo);
+
+The same problem occurs in template parameter type resolution. Consider the following code that does not compile:
+
+    template <class Ptr>
+    void baz (Ptr arg) { std::cout << *arg << std::endl; }
+
+    baz(foo);  // foo is still of type owner_ptr<int>
+
+The standard again dictates that `Ptr` should simply be resolved to the type of `foo`, even though the compiler could use the suggestion that `baz` takes it argument by value and that it knows a type which can be constructed from an lvalue `owner_ptr<int>`. Because it doesn't we have to use `weak` again:
+
+    baz(weak(foo));
+
+
+### Dependent typing ###
+
+> Dependent typing should not be confused with dynamic typing. In dynamic typing the type of an object is enforced at runtime. In dependent typing, the type of an object can depend on its context but it may still be enforced at compile time.
+
+In C++, once an object is declared it cannot change type. Consequently, if we want to allow certain operations on the object during certain parts of its lifetime, we have to anticipate this by giving it a type that will allow those operations for its *entire* lifetime -- even if those operations would be semantically invalid for most of its lifetime. This leaves the possibility of problematic code like the following:
+
+    template <class T> void baz (weak_ptr<T>);
+
+    auto foo = data_ptr<int>(nullptr);
+    *foo;             // invalid, but will only be detected at runtime
+    baz(weak(foo));   // compiles, baz cannot safely assume that its
+                      // argument is not-null
+
+    foo = make<int>(0);
+    *foo;                   // still compiles, now valid
+    baz(weak(foo));         // compiler detects no difference
+
+    auto bar = move(foo);   // foo becomes null again
+    *foo;                   // invalid, still compiles
+    auto ooz = weak(foo);   // compiles even though risky
+    *ooz;                   // also compiles, but invalid!
+
+If we had dependent types in C++ we could eliminate `data_ptr`, remove all runtime assertions and have this instead:
+
+    template <class T> void baz (weak_ptr<T>);
+
+    auto foo = nullptr;     // nullptr_t
+    *foo;                   // does not compile
+    baz(weak(foo));         // error, no conversion known
+
+    foo = make<int>(0);     // becomes owner_ptr<int>
+    *foo;                   // compiles
+    baz(weak(foo));         // fine
+
+    auto bar = move(foo);   // foo becomes nullptr_t again
+    *foo;                   // compiler error
+    auto ooz = weak(foo);   // error, no conversion known
+    auto ooz = foo;         // ooz is also nullptr_t
+    *ooz;                   // compiler error
+
+Dependent typing is not trivial to implement, but as long as the possibility for an object to change type is restricted to other types that have the same underlying binary representation, it should be doable. Doing just that would make C++ an even more powerful language than it is today.
