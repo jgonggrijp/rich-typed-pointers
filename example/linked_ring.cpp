@@ -1,3 +1,5 @@
+// NOTE: GCC compiles but seems to give the wrong results!
+
 #include <rich_typed_ptr.hpp>
 namespace rtp = rich_typed_ptr;
 
