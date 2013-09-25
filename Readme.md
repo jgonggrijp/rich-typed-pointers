@@ -69,4 +69,9 @@ Dangling pointers and null pointers are guaranteed not to occur under normal usa
 1. A pointer is owned by the common ancestor of all threads that share access to it, at or above the scope where all sharing threads are launched and joined.
 2. Threads transfer ownership in order to access a pointer, and non-owning threads do not keep any `weak_ptr` to the referenced object.
 
-As with all smart pointers, it is the responsibility of the user to prevent race conditions on the referenced object. Naturally, the inherent synchronization issue associated with reference counting does not apply to rich typed pointers.
+As with all smart pointers, it is the responsibility of the user to prevent race conditions on the referenced object. The inherent synchronization issue associated with reference counting does not apply to rich typed pointers.
+
+
+### Exception safety ###
+
+`make` and `make_dynamic` will usually offer some degree of exceptions safety, depending on the allocator and the constructor of the object being allocated. Move and copy operations, the comparison operators and `weak` offer the no-throw guarantee. All other operations offer the basic no-leak guarantee on the condition that the referenced object has a non-throwing destructor. None of the functions in the library will throw exceptions out of themselves.
