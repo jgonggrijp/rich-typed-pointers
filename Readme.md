@@ -60,3 +60,13 @@ Under normal usage, cyclic ownership is impossible so it cannot lead to memory l
 Cyclic ownership using `data_ptr` and `move` is possible with some effort, but cannot happen by accident. The datastructure designer is forced to consider what owns what, and naieve mistakes that would lead to cyclic ownership when using `std::shared_ptr` will not compile when using rich typed pointers. When cyclic ownership is created by design, it can also be undone. Cyclic ownership by design is illustrated in `example/linked_ring.cpp`.
 
 Note that rich typed pointers can never be part of multiple ownership cycles at the same time. This is a true impossibility because at any time exactly one pointer will own a given object.
+
+
+### Thread safety ###
+
+Dangling pointers and null pointers are guaranteed not to occur under normal usage if one of the following strategies is adopted:
+
+1. A pointer is owned by the common ancestor of all threads that share access to it, at or above the scope where all sharing threads are launched and joined.
+2. Threads transfer ownership in order to access a pointer, and non-owning threads do not keep any `weak_ptr` to the referenced object.
+
+As with all smart pointers, it is the responsibility of the user to prevent race conditions on the referenced object. Naturally, the inherent synchronization issue associated with reference counting does not apply to rich typed pointers.
