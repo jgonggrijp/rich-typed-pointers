@@ -24,8 +24,7 @@ private:
     using weak_ptr = rtp::weak_ptr<node>;
 
 public:
-    ring ( ) : handle(data_ptr(nullptr)) { }
-    ring (const T & init) : handle(data_ptr(nullptr)) {
+    ring (const T & init) {
         inaugurate(init);  // creates the cycle
     }
     ~ring ( ) {
@@ -68,7 +67,7 @@ public:
     }
 
 private:
-    weak_ptr handle;
+    weak_ptr handle = data_ptr(nullptr);
 
     // create cyclical ownership: this is hard, as it should be!
     void inaugurate (const T & init) {
