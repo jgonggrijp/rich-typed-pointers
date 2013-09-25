@@ -48,6 +48,11 @@ For the purpose of object-oriented programming the rich-typed pointer library im
 All templates in `rich_typed_ptr.hpp` will be specialized for array types. This is not implemented yet.
 
 
+### Custom allocators ###
+
+The rich-typed pointer library will support custom allocators. This is not implemented yet.
+
+
 ### Storage in containers ###
 
 `owner_ptr`, `data_ptr` and `weak_ptr` can all be safely stored in containers. In the former two cases the container owns all objects referenced by the pointers it stores, in the latter case it does not.
