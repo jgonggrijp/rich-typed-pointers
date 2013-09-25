@@ -20,6 +20,8 @@ template <class T>
 class owner_ptr {
 
 public:
+    using value_type = T;
+
     // move-constructible but not copyable or assignable
     owner_ptr ( ) = delete;
     owner_ptr (owner_ptr && source) : pointer(source.pointer) {
@@ -79,6 +81,8 @@ template <class T>
 class data_ptr {
 
 public:
+    using value_type = T;
+
     // like owner_ptr, also assignable and initializable from nullptr
     data_ptr ( ) = delete;
     data_ptr (std::nullptr_t)         : pointer(nullptr)        { }
@@ -120,6 +124,8 @@ template <class T>
 class weak_ptr {
 
 public:
+    using value_type = T;
+
     // copyable but not default-constructible
     weak_ptr ( ) = delete;
     weak_ptr (const owner_ptr<T> & source) : pointer(source.pointer) { }
@@ -156,8 +162,8 @@ inline bool operator!= (const T & left, std::nullptr_t) {
     return !(left == nullptr);
 }
 
-template <class T>
-weak_ptr<T> weak (weak_ptr<T> pointer) {
+template <class Ptr, class T = typename Ptr::value_type>
+weak_ptr<T> weak (const Ptr & pointer) {
     return pointer;
 }
 
