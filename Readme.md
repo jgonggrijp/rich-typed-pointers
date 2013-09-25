@@ -31,10 +31,13 @@ This sums up the basic mechanics of rich-typed pointers. For an illustration, se
 
 Those who paid close attention while reading the description above may think that `owner_ptr` is too restrictive for the implementation of datastructures. Indeed, datastructures generally require that pointers can be zero-initialized and `owner_ptr` does not allow this. Fortunately there is a solution.
 
-For the specific purpose of implementing datastructures `owner_ptr` has a slightly more permissive sibling, `data_ptr`. `data_ptr` is almost identical to `owner_ptr`, including the ability to initialize from `make` and to be cast to `weak_ptr`. In addition it can be explicitly initialized from `nullptr` and allows move assignment.
+For the specific purpose of implementing datastructures `owner_ptr` has a slightly more permissive sibling, `data_ptr`. `data_ptr` is almost identical to `owner_ptr`, including the ability to initialize from `make` (or `make_dynamic`, see below) and to be cast to `weak_ptr`. In addition it can be explicitly initialized from `nullptr` and allows move assignment.
 
 > Note that the added freedom that `data_ptr` provides should really only be needed for the implementation of datastructures. Using it for any other purpose indicates a design fault.
 
 A fairly elaborate illustration of the usage of `data_ptr` is provided in `example/linked_list.cpp`.
 
 
+### Dynamic binding ###
+
+For the purpose of object-oriented programming the rich-typed pointer library implements an alternative factory function, `make_dynamic`. Given two types `base` and `derived`, this function will create a pointer to `base` that references an object on the heap of type `derived`. `make_dynamic` ensures that `derived` is truly a subclass of `base` and that `base` has a virtual destructor. For an illustration, see `example/shapes.cpp`.
