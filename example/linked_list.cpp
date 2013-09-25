@@ -7,6 +7,7 @@ namespace rtp = rich_typed_ptr;
 #include <iostream>
 #include <utility>
 #include <algorithm>
+#include <iterator>
 #include <cstddef>
 using namespace std;
 
@@ -25,7 +26,7 @@ private:
     weak_ptr prev;  // ... but not the previous
 
 public:
-    // constructor takes rvalue reference to data_prt in order to
+    // constructor takes rvalue reference to data_ptr in order to
     // take over ownership
     list_node (const T & value, data_ptr && n, weak_ptr p) :
         data(value),
@@ -69,11 +70,12 @@ private:
     weak_ptr position;  // naturally it doesn't own what it points to
 
 public:
-    using value_type      = T;
-    using size_type       = std::size_t;
-    using difference_type = ptrdiff_t;
-    using reference       = T&;
-    using pointer         = T*;
+    using value_type        = T;
+    using size_type         = std::size_t;
+    using difference_type   = ptrdiff_t;
+    using reference         = T&;
+    using pointer           = T*;
+    using iterator_category = forward_iterator_tag;
 
     list_iterator (weak_ptr p) : position(p) { }
     // default copy ctor, dtor, assignment are all fine
@@ -110,16 +112,13 @@ private:
     using data_ptr = typename node::data_ptr;
     using weak_ptr = typename node::weak_ptr;
 
-    data_ptr first = nullptr;  // owns the first node...
-    weak_ptr last  = first;    // ... but not the last
+    data_ptr first = data_ptr(nullptr);  // owns the first node...
+    weak_ptr last  = weak_ptr(first);    // ... but not the last
 
 public:
-    using value_type      = T;
-    using size_type       = std::size_t;
-    using difference_type = ptrdiff_t;
-    using reference       = T&;
-    using pointer         = T*;
     using iterator        = list_iterator<T>;
+
+    // default ctor, dtor etcetera are all fine
 
     iterator begin ( ) { return rtp::weak(first); }
     iterator end   ( ) { return (last != nullptr) ? last->next : last; }
@@ -197,10 +196,11 @@ int main ( ) {
     test.push_front(4);     // {4, 2, 3}
 
     auto pos2 = find(begin(test), end(test), 2);
+
     test.insert(pos2, 5);   // {4, 5, 2, 3}
 
     copy(begin(test), end(test), ostream_iterator<int>(cout, " "));  // 4 5 2 3
-    cout << endl << test.front() << ' ' << test.back() << endl;      // 4 3
+    cout << endl;
 
     test.pop_front();       // {5, 2, 3}
     test.erase(pos2);       // {5, 3}
