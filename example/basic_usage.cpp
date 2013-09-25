@@ -3,6 +3,7 @@ using namespace std;
 
 #include "rich_typed_ptr.hpp"
 namespace rtp = rich_typed_ptr;
+using rtp::weak;
 
 // functions take weak_ptr as arguments, by value is fine
 void mutatesomeintptr (rtp::weak_ptr<int> thepointer) {
@@ -42,7 +43,7 @@ int main ( ) {
     // due to a limitation in the C++ type system the following won't compile:
     // auto test4 = ptr_min_generic(test1, test2);
     // this can be solved with the convenience cast function `weak`:
-    auto test4 = ptr_min_generic(rtp::weak(test1), rtp::weak(test2));
+    auto test4 = ptr_min_generic(weak(test1), weak(test2));
     cout << *test4 << endl;  // 4
 
     return 0;  // memory is automatically reclaimed
