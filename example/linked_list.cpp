@@ -121,7 +121,7 @@ public:
     using pointer         = T*;
     using iterator        = list_iterator<T>;
 
-    iterator begin ( ) { return rtp::weak<node>(first); }
+    iterator begin ( ) { return rtp::weak(first); }
     iterator end   ( ) { return (last != nullptr) ? last->next : last; }
     // using a nullptr as the end iterator is not a great idea for
     // implementing bidirectional iterators, but it works for the purpose
@@ -209,6 +209,9 @@ int main ( ) {
     test.clear();           // { }
 
     cout << test.empty() << endl;  // true
+
+    test.push_back(1);
+    test.push_back(2);
 
     return 0;  // no memory leaks
 }
