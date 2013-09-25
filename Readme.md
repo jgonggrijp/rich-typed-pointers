@@ -41,3 +41,17 @@ A fairly elaborate illustration of the usage of `data_ptr` is provided in `examp
 ### Dynamic binding ###
 
 For the purpose of object-oriented programming the rich-typed pointer library implements an alternative factory function, `make_dynamic`. Given two types `base` and `derived`, this function will create a pointer to `base` that references an object on the heap of type `derived`. `make_dynamic` ensures that `derived` is truly a subclass of `base` and that `base` has a virtual destructor. For an illustration, see `example/shapes.cpp`.
+
+
+### Arrays ###
+
+All templates in `rich_typed_ptr.hpp` will be specialized for array types. This is not implemented yet.
+
+
+### Cyclic references ###
+
+Under normal usage, cyclic ownership is impossible so it cannot lead to memory leaks. Cyclic referencing through `weak_ptr`s is possible but unproblematic.
+
+Cyclic ownership using `data_ptr` and `move` is possible with some effort, but cannot happen by accident. The datastructure designer is forced to consider what owns what, and naieve mistakes that would lead to cyclic ownership when using `std::shared_ptr` will not compile when using rich typed pointers. When cyclic ownership is created by design, it can also be undone. Cyclic ownership by design is illustrated in `example/linked_ring.cpp`.
+
+Note that rich typed pointers can never be part of multiple ownership cycles at the same time. This is a true impossibility because at any time exactly one pointer will own a given object.
