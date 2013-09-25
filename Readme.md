@@ -42,6 +42,8 @@ A fairly elaborate illustration of the usage of `data_ptr` is provided in `examp
 
 For the purpose of object-oriented programming the rich-typed pointer library implements an alternative factory function, `make_dynamic`. Given two types `base` and `derived`, this function will create a pointer to `base` that references an object on the heap of type `derived`. `make_dynamic` ensures that `derived` is truly a subclass of `base` and that `base` has a virtual destructor. For an illustration, see `example/shapes.cpp`.
 
+As of yet there is no way to downcast a rich-typed pointer created with `make_dynamic`. However, such a feature can be added if there is sufficient demand.
+
 
 ### Arrays ###
 
