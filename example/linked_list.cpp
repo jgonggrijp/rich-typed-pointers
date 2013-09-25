@@ -114,6 +114,7 @@ private:
 
     data_ptr first = data_ptr(nullptr);  // owns the first node...
     weak_ptr last  = weak_ptr(first);    // ... but not the last
+    // (GCC requires the stuttering in this particular case.)
 
 public:
     using iterator        = list_iterator<T>;
