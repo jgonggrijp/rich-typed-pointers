@@ -1,9 +1,9 @@
-#include <iostream>
-using namespace std;
-
-#include "rich_typed_ptr.hpp"
+#include <rich_typed_ptr.hpp>
 namespace rtp = rich_typed_ptr;
 using rtp::weak;
+
+#include <iostream>
+using namespace std;
 
 // functions take weak_ptr as arguments, by value is fine
 void mutatesomeintptr (rtp::weak_ptr<int> thepointer) {
