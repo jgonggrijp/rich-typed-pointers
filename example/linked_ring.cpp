@@ -1,5 +1,3 @@
-// NOTE: GCC compiles but seems to give the wrong results!
-
 #include <rich_typed_ptr.hpp>
 namespace rtp = rich_typed_ptr;
 
@@ -85,10 +83,16 @@ int main ( ) {
     test.push(2);
     test.push(3);
     test.push(4);
-    cout << *test << *++test << *++test << *++test << endl;  // 1234
+    cout << *test;
+    cout << *++test;
+    cout << *++test;
+    cout << *++test << endl;  // 1234
 
     (++test).pop();
-    cout << *test << *++test << *++test << *++test << endl;  // 2342
+    cout << *test;
+    cout << *++test;
+    cout << *++test;
+    cout << *++test << endl;  // 2342
 
     return 0;  // cycle broken and memory reclaimed thanks to custom dtor
 }
