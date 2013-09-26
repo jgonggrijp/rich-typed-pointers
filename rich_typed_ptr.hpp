@@ -171,6 +171,13 @@ struct ptr_traits {
 template <class Ptr>
 typename ptr_traits<Ptr>::weak_ptr_t
 weak (const Ptr & pointer) {
+    static_assert(
+        std::is_convertible<
+            Ptr,
+            typename ptr_traits<Ptr>::weak_ptr_t
+        >::value,
+        "Argument to rich_typed_ptr::weak must be a rich typed pointer"
+    );
     return pointer;
 }
 
