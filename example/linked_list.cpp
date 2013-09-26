@@ -117,7 +117,7 @@ private:
     // (GCC requires the stuttering in this particular case.)
 
 public:
-    using iterator        = list_iterator<T>;
+    using iterator = list_iterator<T>;
 
     // default ctor, dtor etcetera are all fine
 
