@@ -1,5 +1,9 @@
 # Rich-Typed Pointers Quick Reference #
 
+Copyright 2013 Julian Gonggrijp
+
+Version 0, alpha 1.
+
 
 ## Inclusion and namespace ##
 

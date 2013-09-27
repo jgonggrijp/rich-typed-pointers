@@ -1,3 +1,8 @@
+/*
+    Copyright 2013 Julian Gonggrijp
+    Version 0, alpha 1.
+*/
+
 #include <rich_typed_ptr.hpp>
 namespace rtp = rich_typed_ptr;
 

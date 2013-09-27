@@ -2,6 +2,10 @@
 
 _A smart pointer library that relies on the type system._
 
+Copyright 2013 Julian Gonggrijp
+
+Version 0, alpha 1.
+
 
 ## Rationale ##
 

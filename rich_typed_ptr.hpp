@@ -1,6 +1,6 @@
 /*
     Copyright 2013 Julian Gonggrijp
-    License to be specified (copycenter)
+    Version 0, alpha 1.
 */
 
 #ifndef JG_RICH_TYPED_PTR_HPP
