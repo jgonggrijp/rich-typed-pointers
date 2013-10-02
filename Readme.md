@@ -44,13 +44,13 @@ Within function scope, users normally need not worry about the distinction betwe
 This sums up the basic mechanics of rich-typed pointers. For an illustration, see `example/basic_usage.cpp`.
 
 
-### Datastructures ###
+### Data structures ###
 
-Those who paid close attention while reading the description above may think that `owner_ptr` is too restrictive for the implementation of datastructures. Indeed, datastructures generally require that pointers can be zero-initialized and `owner_ptr` does not allow this. Fortunately there is a solution.
+Those who paid close attention while reading the description above may think that `owner_ptr` is too restrictive for the implementation of data structures. Indeed, data structures generally require that pointers can be zero-initialized and `owner_ptr` does not allow this. Fortunately there is a solution.
 
-For the specific purpose of implementing datastructures `owner_ptr` has a slightly more permissive sibling, `data_ptr`. `data_ptr` is almost identical to `owner_ptr`, including the ability to initialize from `make` (or `make_dynamic`, see below) and to be cast to `weak_ptr`. In addition it can be explicitly initialized from `nullptr` and allows move assignment.
+For the specific purpose of implementing data structures `owner_ptr` has a slightly more permissive sibling, `data_ptr`. `data_ptr` is almost identical to `owner_ptr`, including the ability to initialize from `make` (or `make_dynamic`, see below) and to be cast to `weak_ptr`. In addition it can be explicitly initialized from `nullptr` and allows move assignment.
 
-> Note that the added freedom that `data_ptr` provides should really only be needed for the implementation of datastructures. Using it for any other purpose indicates a design fault.
+> Note that the added freedom that `data_ptr` provides should really only be needed for the implementation of data structures. Using it for any other purpose indicates a design fault.
 
 A fairly elaborate illustration of the usage of `data_ptr` is provided in `example/linked_list.cpp`.
 
@@ -81,7 +81,7 @@ The rich-typed pointer library will support custom allocators. This is not imple
 
 Under normal usage, cyclic ownership is impossible so it cannot lead to memory leaks. Cyclic referencing through `weak_ptr`s is possible but unproblematic.
 
-Cyclic ownership using `data_ptr` and `move` is possible with some effort, but cannot happen by accident. The datastructure designer is forced to consider what owns what, and naieve mistakes that would lead to cyclic ownership when using `std::shared_ptr` will not compile when using rich typed pointers. When cyclic ownership is created by design, it can also be undone. Cyclic ownership by design is illustrated in `example/linked_ring.cpp`.
+Cyclic ownership using `data_ptr` and `move` is possible with some effort, but cannot happen by accident. The data structure designer is forced to consider what owns what, and naive mistakes that would lead to cyclic ownership when using `std::shared_ptr` will not compile when using rich typed pointers. When cyclic ownership is created by design, it can also be undone. Cyclic ownership by design is illustrated in `example/linked_ring.cpp`.
 
 Note that rich typed pointers can never be part of multiple ownership cycles at the same time. This is a true impossibility because at any time exactly one pointer will own a given object.
 
