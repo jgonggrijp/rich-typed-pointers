@@ -131,14 +131,14 @@ The same problem occurs in template parameter type resolution. Consider the foll
 
     baz(foo);  // foo is still of type owner_ptr<int>
 
-The standard again dictates that `Ptr` should simply be resolved to the type of `foo`, even though the compiler could use the suggestion that `baz` takes it argument by value and that it knows a type which can be constructed from an lvalue `owner_ptr<int>`. Because it doesn't we have to use `weak` again:
+The standard again dictates that `Ptr` should simply be resolved to the type of `foo`, even though the compiler could use the suggestion that `baz` takes it argument by value and the fact that it knows a type which can be constructed from an lvalue `owner_ptr<int>`. Because it doesn't we have to use `weak` again:
 
     baz(weak(foo));
 
 
 ### Dependent typing ###
 
-> Dependent typing should not be confused with dynamic typing. In dynamic typing the type of an object is enforced at runtime. In dependent typing, the type of an object can depend on its context but it may still be enforced at compile time.
+> Dependent typing should not be confused with dynamic typing. In dynamic typing the type of an object is enforced at runtime. In dependent typing, the type of an object can change depending on the operations performed on it but it may still be enforced at compile time.
 
 In C++, once an object is declared it cannot change type. Consequently, if we want to allow certain operations on the object during certain parts of its lifetime, we have to anticipate this by giving it a type that will allow those operations for its *entire* lifetime -- even if those operations would be semantically invalid for most of its lifetime. This leaves the possibility of problematic code like the following:
 
