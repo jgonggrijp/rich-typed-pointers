@@ -1,3 +1,8 @@
+/*
+    Copyright 2013 Julian Gonggrijp
+    Version 0, alpha 1.
+*/
+
 #include <rich_typed_ptr.hpp>
 namespace rtp = rich_typed_ptr;
 
@@ -25,7 +30,7 @@ struct square : shape {
 };
 
 int main ( ) {
-    // rtp::make_dynamice<base, derived> returns a pointer to base
+    // rtp::make_dynamic<base, derived> returns a pointer to base
     // which references an object of type derived
     auto test1 = rtp::make_dynamic<shape, circle>();
     auto test2 = rtp::make_dynamic<shape, square>();

@@ -1,3 +1,8 @@
+/*
+    Copyright 2013 Julian Gonggrijp
+    Version 0, alpha 1.
+*/
+
 // NOTE: this is meant to illustrate usage of rich-typed pointers,
 //       not to illustrate good C++ coding practices. ;-)
 

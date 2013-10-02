@@ -2,12 +2,29 @@
 
 _A smart pointer library that relies on the type system._
 
+Copyright 2013 Julian Gonggrijp
+
+Version 0, alpha 1.
+
+
+## For the impatient: compiling the examples ##
+
+Assuming your working directory is the one where this Readme and `rich_typed_ptr.hpp` live:
+
+    g++ -std=c++11 -I. example/basic_usage.cpp
+
+or
+
+    clang++ -std=c++11 -stdlib=libc++ -I. example/basic_usage.cpp
+
+As the current implementation strongly relies on C++11 features, it is likely not to compile with other compilers.
+
 
 ## Rationale ##
 
 The purpose of smart pointers is to offer the same flexible access to heap storage as traditional (raw) pointers, while leveraging modern C++ idioms to take away the pitfalls associated with manual resource management. In particular, smart pointers remove the need to explicitly deallocate the associated object when it isn't needed anymore.
 
-As of C++11, the standard library offers two different smart pointer implementations, each with its own virtues. `shared_ptr` allows the same object to be accessed from multiple places and employs reference counting to ensure that allocated objects stay live as long as they are needed. However, it does introduce its own pitfall where circular references may still cause memory leaks, and the reference counting adds overhead at runtime. `unique_ptr` solves these problems by restricting ownership to a single smart pointer instance. However, since it can't be copied it does not allow access from multiple places, unless you break the safety by retrieving the underlying raw pointer through the `get` function.
+As of C++11, the standard library offers two different smart pointer implementations, each with its own virtues. `shared_ptr` allows the same object to be accessed from multiple places and employs reference counting to ensure that allocated objects stay live as long as they are needed. However, it does introduce its own pitfall where cyclic references may still cause memory leaks, and the reference counting adds overhead at runtime. `unique_ptr` solves these problems by restricting ownership to a single smart pointer instance. However, since it can't be copied it does not allow access from multiple places, unless you break the safety by retrieving the underlying raw pointer through the `get` function.
 
 One may wonder why we can't just have a smart pointer that does everything right. Why can't we have a pointer that manages ownership and deallocation, allows access from multiple places, and does all of that without adding runtime overhead? Indeed, there's nothing that stops us from having such a pointer! All we need to do is rely on the type system.
 
@@ -27,13 +44,13 @@ Within function scope, users normally need not worry about the distinction betwe
 This sums up the basic mechanics of rich-typed pointers. For an illustration, see `example/basic_usage.cpp`.
 
 
-### Datastructures ###
+### Data structures ###
 
-Those who paid close attention while reading the description above may think that `owner_ptr` is too restrictive for the implementation of datastructures. Indeed, datastructures generally require that pointers can be zero-initialized and `owner_ptr` does not allow this. Fortunately there is a solution.
+Those who paid close attention while reading the description above may think that `owner_ptr` is too restrictive for the implementation of data structures. Indeed, data structures generally require that pointers can be zero-initialized and `owner_ptr` does not allow this. Fortunately there is a solution.
 
-For the specific purpose of implementing datastructures `owner_ptr` has a slightly more permissive sibling, `data_ptr`. `data_ptr` is almost identical to `owner_ptr`, including the ability to initialize from `make` (or `make_dynamic`, see below) and to be cast to `weak_ptr`. In addition it can be explicitly initialized from `nullptr` and allows move assignment.
+For the specific purpose of implementing data structures `owner_ptr` has a slightly more permissive sibling, `data_ptr`. `data_ptr` is almost identical to `owner_ptr`, including the ability to initialize from `make` (or `make_dynamic`, see below) and to be cast to `weak_ptr`. In addition it can be explicitly initialized from `nullptr` and allows move assignment.
 
-> Note that the added freedom that `data_ptr` provides should really only be needed for the implementation of datastructures. Using it for any other purpose indicates a design fault.
+> Note that the added freedom that `data_ptr` provides should really only be needed for the implementation of data structures. Using it for any other purpose indicates a design fault.
 
 A fairly elaborate illustration of the usage of `data_ptr` is provided in `example/linked_list.cpp`.
 
@@ -64,7 +81,7 @@ The rich-typed pointer library will support custom allocators. This is not imple
 
 Under normal usage, cyclic ownership is impossible so it cannot lead to memory leaks. Cyclic referencing through `weak_ptr`s is possible but unproblematic.
 
-Cyclic ownership using `data_ptr` and `move` is possible with some effort, but cannot happen by accident. The datastructure designer is forced to consider what owns what, and naieve mistakes that would lead to cyclic ownership when using `std::shared_ptr` will not compile when using rich typed pointers. When cyclic ownership is created by design, it can also be undone. Cyclic ownership by design is illustrated in `example/linked_ring.cpp`.
+Cyclic ownership using `data_ptr` and `move` is possible with some effort, but cannot happen by accident. The data structure designer is forced to consider what owns what, and naive mistakes that would lead to cyclic ownership when using `std::shared_ptr` will not compile when using rich typed pointers. When cyclic ownership is created by design, it can also be undone. Cyclic ownership by design is illustrated in `example/linked_ring.cpp`.
 
 Note that rich typed pointers can never be part of multiple ownership cycles at the same time. This is a true impossibility because at any time exactly one pointer will own a given object.
 
@@ -114,14 +131,14 @@ The same problem occurs in template parameter type resolution. Consider the foll
 
     baz(foo);  // foo is still of type owner_ptr<int>
 
-The standard again dictates that `Ptr` should simply be resolved to the type of `foo`, even though the compiler could use the suggestion that `baz` takes it argument by value and that it knows a type which can be constructed from an lvalue `owner_ptr<int>`. Because it doesn't we have to use `weak` again:
+The standard again dictates that `Ptr` should simply be resolved to the type of `foo`, even though the compiler could use the suggestion that `baz` takes it argument by value and the fact that it knows a type which can be constructed from an lvalue `owner_ptr<int>`. Because it doesn't we have to use `weak` again:
 
     baz(weak(foo));
 
 
 ### Dependent typing ###
 
-> Dependent typing should not be confused with dynamic typing. In dynamic typing the type of an object is enforced at runtime. In dependent typing, the type of an object can depend on its context but it may still be enforced at compile time.
+> Dependent typing should not be confused with dynamic typing. In dynamic typing the type of an object is enforced at runtime. In dependent typing, the type of an object can change depending on the operations performed on it but it may still be enforced at compile time.
 
 In C++, once an object is declared it cannot change type. Consequently, if we want to allow certain operations on the object during certain parts of its lifetime, we have to anticipate this by giving it a type that will allow those operations for its *entire* lifetime -- even if those operations would be semantically invalid for most of its lifetime. This leaves the possibility of problematic code like the following:
 

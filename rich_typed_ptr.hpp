@@ -1,6 +1,6 @@
 /*
     Copyright 2013 Julian Gonggrijp
-    License to be specified (copycenter)
+    Version 0, alpha 1.
 */
 
 #ifndef JG_RICH_TYPED_PTR_HPP
@@ -36,7 +36,7 @@ public:
     template <class U1, class U2, class ... Us>
     friend owner_ptr<U1> make_dynamic (Us&& ...);
 
-    // dereferencable
+    // dereferenceable
     T & operator*  ( ) const { assert(pointer); return *pointer; }
     T * operator-> ( ) const { assert(pointer); return  pointer; }
 
@@ -99,7 +99,7 @@ public:
         return *this;
     }
 
-    // dereferencable
+    // dereferenceable
     T & operator*  ( ) const { assert(pointer); return *pointer; }
     T * operator-> ( ) const { assert(pointer); return  pointer; }
 
@@ -139,7 +139,7 @@ public:
         return *this;
     }
 
-    // dereferencable
+    // dereferenceable
     T & operator*  ( ) const { assert(pointer); return *pointer; }
     T * operator-> ( ) const { assert(pointer); return  pointer; }
 
