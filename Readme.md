@@ -7,6 +7,19 @@ Copyright 2013 Julian Gonggrijp
 Version 0, alpha 1.
 
 
+## For the impatient: compiling the examples ##
+
+Assuming your working directory is the one where this Readme and `rich_typed_ptr.hpp` live:
+
+    g++ -std=c++11 -I. example/basic_usage.cpp
+
+or
+
+    clang++ -std=c++11 -stdlib=libc++ -I. example/basic_usage.cpp
+
+As the current implementation strongly relies on C++11 features, it is likely not to compile with other compilers.
+
+
 ## Rationale ##
 
 The purpose of smart pointers is to offer the same flexible access to heap storage as traditional (raw) pointers, while leveraging modern C++ idioms to take away the pitfalls associated with manual resource management. In particular, smart pointers remove the need to explicitly deallocate the associated object when it isn't needed anymore.
